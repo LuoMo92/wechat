@@ -1,5 +1,7 @@
 package com.luomo.wechat.util;
 
+import com.luomo.wechat.po.News;
+import com.luomo.wechat.po.NewsMessage;
 import com.luomo.wechat.po.TextMessage;
 import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
@@ -8,18 +10,18 @@ import org.dom4j.io.SAXReader;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by LiuMei on 2016-12-28.
  */
 public class MessageUtil {
 
+    public static final String URL = "http://luomo.tunnel.qydev.com/wechat";
+
     public static final String MESSAGE_TEXT = "text";
     public static final String MESSAGE_IMAGE= "image";
+    public static final String MESSAGE_NEWS= "news";
     public static final String MESSAGE_VOICE= "voice";
     public static final String MESSAGE_VIDEO = "video";
     public static final String MESSAGE_LINK = "link";
@@ -61,13 +63,20 @@ public class MessageUtil {
         return xStream.toXML(textMessage);
     }
 
+    /**
+     * 拼接文本消息
+     * @param toUserName
+     * @param fromUserName
+     * @param content
+     * @return
+     */
     public static String initText(String toUserName,String fromUserName,String content){
         TextMessage textMessage = new TextMessage();
         textMessage.setFromUserName(toUserName);
         textMessage.setToUserName(fromUserName);
         textMessage.setMsgType(MessageUtil.MESSAGE_TEXT);
         textMessage.setCreateTime(new Date().getTime());
-        textMessage.setContent("您发送的消息是:"+content);
+        textMessage.setContent(content);
         return textMessageToXml(textMessage);
     }
 
@@ -105,5 +114,42 @@ public class MessageUtil {
         buffer.append("成功得到菜单2的回复\n");
         buffer.append("请继续加油啊~\n");
         return buffer.toString();
+    }
+
+    /**
+     * 图文消息转为xml
+     * @param newsMessage
+     * @return
+     */
+    public static String newsMessageToXml(NewsMessage newsMessage){
+        XStream xStream = new XStream();
+        xStream.alias("xml",newsMessage.getClass());
+        xStream.alias("item", new News().getClass());
+        return xStream.toXML(newsMessage);
+    }
+
+    /**
+     *图文消息组装
+     * @param toUserName
+     * @param fromUserName
+     * @return
+     */
+    public static String initNews(String toUserName,String fromUserName){
+        List<News> newsList = new ArrayList<>();
+        News news = new News();
+        news.setTitle("测试公众号");
+        news.setDescription("扫描图片即可关注测试公众号");
+        news.setPicUrl(URL+"/image/测试公众号二维码.png");
+        news.setUrl("www.baidu.com");
+        newsList.add(news);
+
+        NewsMessage newsMessage = new NewsMessage();
+        newsMessage.setFromUserName(toUserName);
+        newsMessage.setToUserName(fromUserName);
+        newsMessage.setCreateTime(new Date().getTime());
+        newsMessage.setMsgType(MESSAGE_NEWS);
+        newsMessage.setArticles(newsList);
+        newsMessage.setArticleCount(newsList.size());
+        return newsMessageToXml(newsMessage);
     }
 }
