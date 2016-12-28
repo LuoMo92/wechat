@@ -1,8 +1,6 @@
 package com.luomo.wechat.util;
 
-import com.luomo.wechat.po.News;
-import com.luomo.wechat.po.NewsMessage;
-import com.luomo.wechat.po.TextMessage;
+import com.luomo.wechat.po.*;
 import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -152,4 +150,37 @@ public class MessageUtil {
         newsMessage.setArticleCount(newsList.size());
         return newsMessageToXml(newsMessage);
     }
+
+    /**
+     * 组装图片消息
+     * @param toUserName
+     * @param fromUserName
+     * @return
+     */
+    public static String initImage(String toUserName,String fromUserName){
+
+        Image image = new Image();
+        image.setMediaId("ihUcoDIDDxpBlegy1zR1nBVFexZMt3TsyPF7Na_obuJ2StSd1G0S6_JUhPa3k4qx");
+
+        ImageMessage imageMessage = new ImageMessage();
+        imageMessage.setFromUserName(toUserName);
+        imageMessage.setToUserName(fromUserName);
+        imageMessage.setCreateTime(new Date().getTime());
+        imageMessage.setMsgType(MESSAGE_IMAGE);
+        imageMessage.setImage(image);
+        return imageMessageToXml(imageMessage);
+    }
+
+    /**
+     * 图片消息转为xml
+     * @param imageMessage
+     * @return
+     */
+    public static String imageMessageToXml(ImageMessage imageMessage){
+        XStream xStream = new XStream();
+        xStream.alias("xml",imageMessage.getClass());
+        xStream.alias("Image", new News().getClass());
+        return xStream.toXML(imageMessage);
+    }
+
 }

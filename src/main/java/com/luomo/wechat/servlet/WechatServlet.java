@@ -53,6 +53,8 @@ public class WechatServlet extends HttpServlet {
                     message = MessageUtil.initText(toUserName,fromUserName,MessageUtil.firstMenu());
                 }else if("2".equals(content)){
                     message = MessageUtil.initNews(toUserName,fromUserName);
+                }else if ("3".equals(content)){
+                    message = MessageUtil.initImage(toUserName,fromUserName);
                 }else {
                     message = MessageUtil.initText(toUserName,fromUserName,MessageUtil.menuText());
                 }
