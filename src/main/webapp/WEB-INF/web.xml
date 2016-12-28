@@ -4,4 +4,13 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  
+  <servlet>
+    <servlet-name>wechatServlet</servlet-name>
+    <servlet-class>com.luomo.wechat.servlet.WechatServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>wechatServlet</servlet-name>
+    <url-pattern>/wx</url-pattern>
+  </servlet-mapping>
 </web-app>
