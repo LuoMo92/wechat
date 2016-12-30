@@ -24,7 +24,7 @@ public class WechatServlet extends HttpServlet {
         String echostr = request.getParameter("echostr");
 
         PrintWriter out = response.getWriter();
-        if(CheckUtil.checkSignature(signature,timestamp,nonce)){
+        if (CheckUtil.checkSignature(signature, timestamp, nonce)) {
             out.write(echostr);
         }
     }
@@ -38,7 +38,7 @@ public class WechatServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
-            Map<String ,String> map = MessageUtil.xmlToMap(request);
+            Map<String, String> map = MessageUtil.xmlToMap(request);
             String fromUserName = map.get("FromUserName");
             String toUserName = map.get("ToUserName");
             String createTime = map.get("CreateTime");
@@ -47,28 +47,41 @@ public class WechatServlet extends HttpServlet {
             String msgId = map.get("MsgId");
 
             String message = null;
-            if(MessageUtil.MESSAGE_TEXT.equals(msgType)){
+            if (MessageUtil.MESSAGE_TEXT.equals(msgType)) {
 
-                if("1".equals(content)){
-                    message = MessageUtil.initText(toUserName,fromUserName,MessageUtil.firstMenu());
-                }else if("2".equals(content)){
-                    message = MessageUtil.initNews(toUserName,fromUserName);
-                }else if ("3".equals(content)){
-                    message = MessageUtil.initImage(toUserName,fromUserName);
-                }else {
-                    message = MessageUtil.initText(toUserName,fromUserName,MessageUtil.menuText());
+                if ("1".equals(content)) {
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.firstMenu());
+                } else if ("2".equals(content)) {
+                    message = MessageUtil.initNews(toUserName, fromUserName);
+                } else if ("3".equals(content)) {
+                    message = MessageUtil.initImage(toUserName, fromUserName);
+                } else {
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
                 }
-            }else if(MessageUtil.MESSAGE_EVENT.equals(msgType)){
+            } else if (MessageUtil.MESSAGE_EVENT.equals(msgType)) {
                 String eventType = map.get("Event");
-                if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){
-                    message = MessageUtil.initText(toUserName,fromUserName,MessageUtil.menuText());
+                if (MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)) {
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
+                } else if (MessageUtil.MESSAGE_CLICK.equals(eventType)) {
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
+                } else if (MessageUtil.MESSAGE_VIEW.equals(eventType)) {
+                    String url = map.get("EventKey");
+                    message = MessageUtil.initText(toUserName, fromUserName, url);
+                } else if (MessageUtil.MESSAGE_SCAN.equals(eventType)) {
+                    String key = map.get("EventKey");
+                    message = MessageUtil.initText(toUserName, fromUserName, key);
                 }
+            } else if (MessageUtil.MESSAGE_LOCATION.equals(msgType)) {
+                String label = map.get("Label");
+                message = MessageUtil.initText(toUserName, fromUserName, label);
             }
             out.write(message);
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            out.close();
+        } finally {
+            if (out != null) {
+                out.close();
+            }
         }
     }
 }
