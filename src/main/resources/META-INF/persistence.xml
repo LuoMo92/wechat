@@ -1,0 +1,61 @@
+<!-- ~ Hibernate, Relational Persistence for Idiomatic Java ~ ~ Copyright 
+	(c) 2010, Red Hat Inc. or third-party contributors as ~ indicated by the 
+	@author tags or express copyright attribution ~ statements applied by the 
+	authors. All third-party contributions are ~ distributed under license by 
+	Red Hat Inc. ~ ~ This copyrighted material is made available to anyone wishing 
+	to use, modify, ~ copy, or redistribute it subject to the terms and conditions 
+	of the GNU ~ Lesser General Public License, as published by the Free Software 
+	Foundation. ~ ~ This program is distributed in the hope that it will be useful, 
+	~ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+	~ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+	License ~ for more details. ~ ~ You should have received a copy of the GNU 
+	Lesser General Public License ~ along with this distribution; if not, write 
+	to: ~ Free Software Foundation, Inc. ~ 51 Franklin Street, Fifth Floor ~ 
+	Boston, MA 02110-1301 USA -->
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
+
+	<persistence-unit name="com.luomo.wechat.domain">
+		<description>
+            Persistence unit for the JPA of JAS
+        </description>
+		<class>com.luomo.wechat.domain.User</class>
+		<properties>
+
+			<!-- production configuration -->
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/wechat" />
+			<property name="javax.persistence.jdbc.user" value="root" />
+			<property name="javax.persistence.jdbc.password" value="root" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.hbm2ddl.auto" value="create" />
+			<!-- 
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect"></property>
+            -->
+			<!-- 配置C3P0数据库连接池 -->
+			<property name="hibernate.connection.provider_class" value="org.hibernate.c3p0.internal.C3P0ConnectionProvider" />
+			<!-- 最小连接数 --> 
+			<property name="c3p0.min_size" value="5" />
+			 <!--连接池中保留的最大连接数。默认值: 15 -->  
+			<property name="c3p0.max_size" value="30" />
+			<!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->    
+			<property name="c3p0.maxIdleTime" value="60" />
+			<!-- 最大的PreparedStatement的数量 --> 
+			<property name="c3p0.max_statements" value="50" />
+			<!-- 获得连接的超时时间,如果超过这个时间,会抛出异常，单位毫秒 -->   
+			<property name="c3p0.timeout" value="1800" />
+			<!-- 每隔120秒检查连接池里的空闲连接 ，单位是秒-->  
+			<property name="c3p0.idle_test_period" value="120" />
+			 <!-- 当连接池里面的连接用完的时候，C3P0一下获取的新的连接数 --> 
+			<property name="c3p0.acquire_increment" value="1" />
+			<!-- 是否每次都验证连接是否可用 -->    
+			<property name="c3p0.validate" value="false" />
+			<!-- 默认为false。如果为true，在连接从连接池取出是，会同步发一个检测请求，以保证连接可用。 -->
+			<property name="hibernate.c3p0.testConnectionOnCheckout" value="true" />
+		</properties>
+
+	</persistence-unit>
+
+</persistence>             
