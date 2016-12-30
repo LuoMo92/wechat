@@ -29,7 +29,7 @@ public class MessageUtil {
     public static final String MESSAGE_UNSUBSCRIBE= "unsubscribe";
     public static final String MESSAGE_CLICK= "CLICK";
     public static final String MESSAGE_VIEW= "VIEW";
-    public static final String MESSAGE_SCAN= "scancode_push";
+    public static final String MESSAGE_SCANCODE= "scancode_push";
 
     /**
      * xml转成map
@@ -88,6 +88,7 @@ public class MessageUtil {
         buffer.append("欢迎您的关注,请按照菜单提示进行操作:\n\n");
         buffer.append("1.请回复1\n");
         buffer.append("2.请回复2\n");
+        buffer.append("3.翻译\n");
         return buffer.toString();
     }
 
@@ -112,6 +113,20 @@ public class MessageUtil {
         buffer.append("恭喜你\n\n");
         buffer.append("成功得到菜单2的回复\n");
         buffer.append("请继续加油啊~\n");
+        return buffer.toString();
+    }
+
+    /**
+     * 菜单3
+     * @return
+     */
+    public static String threeMenu(){
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("词组翻译使用指南\n\n");
+        buffer.append("使用示例\n");
+        buffer.append("翻译足球\n");
+        buffer.append("翻译中国足球\n");
+        buffer.append("翻译football\n");
         return buffer.toString();
     }
 

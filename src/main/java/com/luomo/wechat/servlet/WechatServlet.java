@@ -2,7 +2,10 @@ package com.luomo.wechat.servlet;
 
 import com.luomo.wechat.util.CheckUtil;
 import com.luomo.wechat.util.MessageUtil;
+import com.luomo.wechat.util.WechatUtil;
+import org.dom4j.DocumentException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,58 +33,63 @@ public class WechatServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
-        PrintWriter out = response.getWriter();
-
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        PrintWriter out = resp.getWriter();
         try {
-            Map<String, String> map = MessageUtil.xmlToMap(request);
+            Map<String, String> map = MessageUtil.xmlToMap(req);
             String fromUserName = map.get("FromUserName");
             String toUserName = map.get("ToUserName");
-            String createTime = map.get("CreateTime");
-            String content = map.get("Content");
             String msgType = map.get("MsgType");
-            String msgId = map.get("MsgId");
+            String content = map.get("Content");
 
             String message = null;
-            if (MessageUtil.MESSAGE_TEXT.equals(msgType)) {
-
-                if ("1".equals(content)) {
+            if(MessageUtil.MESSAGE_TEXT.equals(msgType)){
+                if("1".equals(content)){
                     message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.firstMenu());
-                } else if ("2".equals(content)) {
+                }else if("2".equals(content)){
                     message = MessageUtil.initNews(toUserName, fromUserName);
-                } else if ("3".equals(content)) {
-                    message = MessageUtil.initImage(toUserName, fromUserName);
-                } else {
+                }else if("3".equals(content)){
+                    message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.threeMenu());
+                }else if("?".equals(content) || "？".equals(content)){
                     message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
+                }else if(content.startsWith("翻译")){
+                    String word = content.replaceAll("^翻译", "").trim();
+                    if("".equals(word)){
+                        message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.threeMenu());
+                    }else{
+                        message = MessageUtil.initText(toUserName, fromUserName, WechatUtil.trans(word,"auto","auto"));
+                    }
                 }
-            } else if (MessageUtil.MESSAGE_EVENT.equals(msgType)) {
+            }else if(MessageUtil.MESSAGE_EVENT.equals(msgType)){
                 String eventType = map.get("Event");
-                if (MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)) {
+                if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){
                     message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
-                } else if (MessageUtil.MESSAGE_CLICK.equals(eventType)) {
+                }else if(MessageUtil.MESSAGE_CLICK.equals(eventType)){
                     message = MessageUtil.initText(toUserName, fromUserName, MessageUtil.menuText());
-                } else if (MessageUtil.MESSAGE_VIEW.equals(eventType)) {
+                }else if(MessageUtil.MESSAGE_VIEW.equals(eventType)){
                     String url = map.get("EventKey");
                     message = MessageUtil.initText(toUserName, fromUserName, url);
-                } else if (MessageUtil.MESSAGE_SCAN.equals(eventType)) {
+                }else if(MessageUtil.MESSAGE_SCANCODE.equals(eventType)){
                     String key = map.get("EventKey");
                     message = MessageUtil.initText(toUserName, fromUserName, key);
                 }
-            } else if (MessageUtil.MESSAGE_LOCATION.equals(msgType)) {
+            }else if(MessageUtil.MESSAGE_LOCATION.equals(msgType)){
                 String label = map.get("Label");
                 message = MessageUtil.initText(toUserName, fromUserName, label);
             }
-            out.write(message);
+
+            System.out.println(message);
+
+            out.print(message);
+        } catch (DocumentException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (out != null) {
-                out.close();
-            }
+        } finally{
+            out.close();
         }
     }
 }

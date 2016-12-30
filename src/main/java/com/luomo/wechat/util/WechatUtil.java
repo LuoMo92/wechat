@@ -1,6 +1,9 @@
 package com.luomo.wechat.util;
 
 import com.luomo.wechat.po.*;
+import com.luomo.wechat.trans.po.TransBack;
+import com.luomo.wechat.trans.po.TransResult;
+import com.luomo.wechat.trans.util.TransApi;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,6 +31,11 @@ public class WechatUtil {
     private static final String UPLOAD_URL = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
 
     private static final String CREATE_MENU_URL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
+
+    private static final String TRANS_APP_ID="20161230000034970";
+
+    private static final String TRANS_APP_SECRET="G1FXW0j4z3n2xmh_IDJ1";
+
 
     /**
      * get请求
@@ -211,6 +219,25 @@ public class WechatUtil {
             result = jsonObject.getInt("errcode");
         }
         return result;
+    }
+
+    public static String trans(String query,String from,String to){
+        TransApi transApi = new TransApi(TRANS_APP_ID,TRANS_APP_SECRET);
+        if(from == null){
+            from = "auto";
+        }
+        if(to == null){
+            to = "auto";
+        }
+        String result = transApi.getTransResult(query,from,to);
+        JSONObject jsonObject = JSONObject.fromObject(result);
+        TransBack transBack = (TransBack) JSONObject.toBean(jsonObject,TransBack.class);
+        TransResult[] trans_result = transBack.getTrans_result();
+        StringBuffer dst = new StringBuffer();
+        for(TransResult t : trans_result){
+            dst.append(t.getDst()+"\n");
+        }
+        return dst.toString();
     }
 
 }
